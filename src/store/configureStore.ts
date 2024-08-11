@@ -4,6 +4,15 @@ import { loadState, saveState } from 'src/utils/persist';
 
 const persistedState = loadState();
 
+export const setupStore = (preloadedState?: Partial<RootState>) => {
+  return configureStore({
+    reducer: {
+      taskList: taskListReducer
+    },
+    preloadedState
+  })
+}
+
 export const store = configureStore({
   reducer: {
     taskList: taskListReducer
@@ -19,4 +28,5 @@ store.subscribe(() => {
 });
 
 export type RootState = ReturnType<typeof store.getState>;
+export type AppStore = ReturnType<typeof setupStore>
 export type AppDispatch = typeof store.dispatch;

@@ -2,14 +2,22 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./configureStore";
 
+export type TypeFilter = "noDone" | "done";
+
+function getRandomInt(max: number) {
+  return Math.floor(Math.random() * max);
+}
+
 export interface taskListState {
   list: Task[];
   notification: string;
+  filter: TypeFilter | null;
 }
 
 const initialState: taskListState = {
   list: [],
   notification: "",
+  filter: null,
 };
 
 export const taskListSlice = createSlice({
@@ -18,7 +26,7 @@ export const taskListSlice = createSlice({
   reducers: {
     addTask: (state, action: PayloadAction<Task["header"]>) => {
       state.list.push({
-        id: crypto.randomUUID(),
+        id: String(getRandomInt(1000000000)),
         header: action.payload,
         done: false,
       });
@@ -50,6 +58,9 @@ export const taskListSlice = createSlice({
     clearNotification: (state) => {
       state.notification = "";
     },
+    setFilter: (state, action: PayloadAction<TypeFilter | null>) => {
+      state.filter = action.payload;
+    },
   },
 });
 
@@ -59,6 +70,7 @@ export const {
   deleteTask,
   toggleTask,
   clearNotification,
+  setFilter,
 } = taskListSlice.actions;
 
 export default taskListSlice.reducer;
@@ -74,4 +86,6 @@ export const uncompleteCount = (state: RootState) =>
   state.taskList.list.filter((x) => !x.done).length;
 
 export const getNotification = (state: RootState) =>
-  state.taskList.notification
+  state.taskList.notification;
+
+export const getFilter = (state: RootState) => state.taskList.filter;
